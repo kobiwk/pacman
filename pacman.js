@@ -67,12 +67,11 @@
 			}
 		} 
 	};
-
+	let direction = 0;
 	let PacmanPowers = {
 		move: function() {
 			let x = 0;
 			let y = 0;
-			let direction = 0;
 			document.addEventListener('keydown', function(event){
 				//console.log( event.keyCode );
 				/* increase values below so '%' operator could be used */
@@ -150,15 +149,56 @@
 				context.fillStyle = "blue";
 				
 				if ( event.keyCode === 32 ) {
-					
-					let attack = setInterval( function() {
+					if ( direction === "right") {
+						let attack = setInterval( function() {
 						//attackX += 4;
 						context.fillRect(attackX+32, attackY, 32, 32);
 						attackX += 5;
 						//createBeigns.Pacman();
 						context.drawImage(weap, 0, 0, 520, 520, attackX+32, attackY, 32, 32);
-					if ( attackX === 700 ) clearInterval( attack );
-					}, 10);
+						if ( attackX >= 700 ) clearInterval( attack );
+						}, 10);
+					}
+					if ( direction === "left") {
+						let attack = setInterval( function() {
+						//attackX += 4;
+						context.fillRect(attackX-32, attackY, 32, 32);
+						attackX -= 5;
+						//createBeigns.Pacman();
+						context.drawImage(weap, 0, 0, 520, 520, attackX-32, attackY, 32, 32);
+						if ( attackX <= 0 ) clearInterval( attack );
+						}, 10);
+					}
+					if ( direction === "up") {
+						let attack = setInterval( function() {
+						//attackX += 4;
+						context.fillRect(attackX, attackY-32, 32, 32);
+						attackY -= 5;
+						//createBeigns.Pacman();
+						context.drawImage(weap, 0, 0, 520, 520, attackX, attackY-32, 32, 32);
+						if ( attackY <= 60 ) {
+							clearInterval( attack );
+							context.fillRect(attackX, 30, 32, 32);
+						}
+							
+						}, 10);
+					}
+
+					if ( direction === "down") {
+						let attack = setInterval( function() {
+						//attackX += 4;
+						context.fillRect(attackX, attackY+32, 32, 32);
+						attackY += 5;
+						//createBeigns.Pacman();
+						context.drawImage(weap, 0, 0, 520, 520, attackX, attackY+32, 32, 32);
+						if ( attackY >= 512 ) {
+							clearInterval( attack );
+							//context.fillRect(attackX, 60, 32, 32);
+						}
+							
+						}, 10);
+					}
+					
 									
 				};
 			}, false);
