@@ -12,14 +12,19 @@
 	var reCreateBoard = createBoard = function() {
 		context.fillStyle = "blue";
 		context.fillRect( 0, 0, pacmanWidth, pacmanHeight );
-		//createBeigns.RedEnemy();
+		context.fillStyle = "white";
+		context.font = "20px Verdana";
+		context.fillText("Pacman", 10, 30);
+		context.fillStyle = "blue";
 	}
+
+
 
 	/* variables to define position of pacman */
 
 	let PacmanBasics = {
 		PacmanX: 0,
-		PacmanY: 0,
+		PacmanY: 40,
 		PacmanSpeed: 10,
 		createPacman: function() {
 			let loadBeignsImages = new Image();
@@ -27,7 +32,7 @@
 			return loadBeignsImages.onload = function Pacman() {
 				//default
 				if ( PacmanBasics.PacmanX % 2 === 0 ) {
-					context.drawImage(loadBeignsImages, 320, 0, 32, 32, 0, 0, 32, 32);
+					context.drawImage(loadBeignsImages, 320, 0, 32, 32, 0, 40, 32, 32);
 				} 
 				PacmanPowers.move();
 			}
@@ -142,9 +147,9 @@
 				PacmanBasics.PacmanX = pacmanWidth;
 			}
 			if ( PacmanBasics.PacmanY > pacmanHeight ) {
-				PacmanBasics.PacmanY = 0;
+				PacmanBasics.PacmanY = 40;
 			}
-			if ( PacmanBasics.PacmanY < 0 ) {
+			if ( PacmanBasics.PacmanY < 40 ) {
 				PacmanBasics.PacmanY = pacmanHeight;
 			}
 		}
@@ -187,7 +192,13 @@
 			var that = this;
 			function iLikeToMoveIt() {
 				//start default movement
-				
+					console.log(PacmanBasics.PacmanX);
+					console.log(that.x);
+
+					//touch of enemies
+				if ( PacmanBasics.PacmanX <= (that.x + 26) && that.x <= ( PacmanBasics.PacmanX + 26 ) && PacmanBasics.PacmanY <= ( that.y + 26 ) && that.y <= ( PacmanBasics.PacmanY + 26) ) {
+					//alert('dodir!');
+				}
 				counter3++;
 				if ( counter3 == 30 ) {
 					direction = that.choseDirection();
@@ -301,10 +312,10 @@
 				context.fillRect(x, y-32, 32, 32);
 			}
 			
-			this.y = 0;
+			this.y = 40;
 
 		}
-		if ( y < 0 ) {
+		if ( y < 40 ) {
 			if ( direction === "up" ) {
 				//delete enemy image
 				context.fillRect(x, y, 32, 32);
@@ -329,7 +340,7 @@
 		}
 	}
 
-	
+
 
 	let EnemyBasics = {
 		redEnemyX: 100,
