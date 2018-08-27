@@ -4,7 +4,8 @@
 	pacmanWorld.id = "pacman-world";
 	pacmanWidth = pacmanWorld.width = 712;
 	pacmanHeight = pacmanWorld.height = 512;
-
+	let pacmanLives = 3;
+	let score = 0
 	document.body.appendChild(pacmanWorld);
 
 	let context = pacmanWorld.getContext('2d');
@@ -14,11 +15,31 @@
 		context.fillRect( 0, 0, pacmanWidth, pacmanHeight );
 		context.fillStyle = "white";
 		context.font = "20px Verdana";
-		context.fillText("Pacman", 10, 30);
+		context.fillText("Pacman: " + pacmanLives + " Score: " + score, 10, 30);
 		context.fillStyle = "blue";
 	}
 
+	function resultOfGame(obj) {
+		var that = obj;
+			//touch of enemies...
+		if ( PacmanBasics.PacmanX <= (that.x + 26) && that.x <= ( PacmanBasics.PacmanX + 26 ) && PacmanBasics.PacmanY <= ( that.y + 26 ) && that.y <= ( PacmanBasics.PacmanY + 26) ) {
+			//... takes Pacman lives
+			pacmanLives--;
+			//clear background and add new text. Primitive.
+			context.fillStyle = "blue";
+			context.fillRect( 0, 0, pacmanWidth, 40 );
+			context.fillStyle = "white";
+			context.font = "20px Verdana";
+			context.fillText("Pacman: " + pacmanLives + " Score: " + score, 10, 30);
+			context.fillStyle = "blue";
 
+			//send Pacman to default position
+			context.fillRect( PacmanBasics.PacmanX, PacmanBasics.PacmanY, 32, 32 );
+			PacmanBasics.PacmanX = 0;
+			PacmanBasics.PacmanY = 40;
+			
+		}
+	}
 
 	/* variables to define position of pacman */
 
@@ -66,23 +87,32 @@
 				PacmanPowers.clearPacmanPreviousPosition();
 				PacmanPowers.stayInside();
 				
-
-				if ( event.keyCode === 39 ) {
-					PacmanBasics.PacmanX+=PacmanBasics.PacmanSpeed;
-					direction = "right";
+				if ( pacmanLives > 0) {
+					if ( event.keyCode === 39 ) {
+						PacmanBasics.PacmanX+=PacmanBasics.PacmanSpeed;
+						direction = "right";
+					}
+					if ( event.keyCode === 40 ) {				
+						PacmanBasics.PacmanY+=PacmanBasics.PacmanSpeed;
+						direction = "down";	
+					}
+					if ( event.keyCode === 37 ) {					
+						PacmanBasics.PacmanX-=PacmanBasics.PacmanSpeed;
+						direction = "left";
+					}
+					if ( event.keyCode === 38 ) {					
+						PacmanBasics.PacmanY-=PacmanBasics.PacmanSpeed;
+						direction = "up";
+					}
+				} else {
+					context.fillStyle = "blue";
+					context.fillRect( 0, 0, pacmanWidth, 40 );
+					context.fillStyle = "white";
+					context.font = "20px Verdana";
+					context.fillText("Pacman: " + pacmanLives + " Score: " + score + " THIS IS THE END OF YOU LOSER!!!!", 10, 30);
+					context.fillStyle = "blue";
 				}
-				if ( event.keyCode === 40 ) {				
-					PacmanBasics.PacmanY+=PacmanBasics.PacmanSpeed;
-					direction = "down";	
-				}
-				if ( event.keyCode === 37 ) {					
-					PacmanBasics.PacmanX-=PacmanBasics.PacmanSpeed;
-					direction = "left";
-				}
-				if ( event.keyCode === 38 ) {					
-					PacmanBasics.PacmanY-=PacmanBasics.PacmanSpeed;
-					direction = "up";
-				}
+					
 
 				//draw Pacman one step ahead
 				if ( x % 2 ===  0 ) {
@@ -193,12 +223,14 @@
 			function iLikeToMoveIt() {
 				//start default movement
 					console.log(PacmanBasics.PacmanX);
-					console.log(that.x);
 
-					//touch of enemies
-				if ( PacmanBasics.PacmanX <= (that.x + 26) && that.x <= ( PacmanBasics.PacmanX + 26 ) && PacmanBasics.PacmanY <= ( that.y + 26 ) && that.y <= ( PacmanBasics.PacmanY + 26) ) {
-					//alert('dodir!');
-				}
+					resultOfGame(that);
+
+				
+
+
+
+
 				counter3++;
 				if ( counter3 == 30 ) {
 					direction = that.choseDirection();
