@@ -43,10 +43,85 @@
 
 	function detectCollison(pacman, enemy) {
 		if ( pacman.x <= (enemy.x + 26) && enemy.x <= ( pacman.x + 26 ) && pacman.y <= ( enemy.y + 26 ) && enemy.y <= ( pacman.y + 26 ) ) {
-			alert("Huoston, we got a problem!");
+			alert("Houston, we got a problem!");
 		}
 
 	}
+
+	// detect when enemy is hit with Pacman's weapon
+	function detectHit( move_direction, attackX, attackY, weapon, obj ) {
+	
+		if ( direction === move_direction ) {
+			let attack = setInterval( function() {
+
+				if ( move_direction === "right" ) {
+					context.fillRect(attackX+32, attackY, 32, 32);
+					attackX += 5;
+
+					context.drawImage(weapon, 0, 0, 520, 520, attackX+32, attackY, 32, 32);
+					
+					//clear weapon when it leave the board
+					if ( attackX >= 700 ) clearInterval( attack );			
+				}
+
+				if ( move_direction === "left" ) {
+					context.fillRect(attackX-32, attackY, 32, 32);
+							attackX -= 5;
+
+					context.drawImage(weapon, 0, 0, 520, 520, attackX-32, attackY, 32, 32);
+					//clear weapon when it leave the board
+					if ( attackX <= 0 ) clearInterval( attack );	
+				}
+
+				if ( move_direction === "up" ) {
+					context.fillRect(attackX, attackY-32, 32, 32);
+					attackY -= 5;
+
+					context.drawImage(weapon, 0, 0, 520, 520, attackX, attackY-32, 32, 32);
+
+					//clear weapon when it leave the board
+					if ( attackY <= 60 ) {
+						clearInterval( attack );
+						context.fillRect(attackX, 30, 32, 32);
+					}	
+				}
+				
+				if ( move_direction === "down" ) {
+					let attack = setInterval( function() {
+
+						context.fillRect(attackX, attackY+32, 32, 32);
+						attackY += 5;
+
+						context.drawImage(weapon, 0, 0, 520, 520, attackX, attackY+32, 32, 32);
+						
+						//clear weapon when it leave the board
+						if ( attackY >= 512 ) {
+							clearInterval( attack );
+							//context.fillRect(attackX, 60, 32, 32);
+						}
+					}, 10);
+				}
+
+				//detect when weapon hit the target
+				if ( attackX <= (obj.x + 26) && obj.x <= ( attackX + 26 ) && attackY <= ( obj.y + 26 ) && obj.y <= ( attackY + 26 ) ) {
+					alert("Die motherfucker!");
+
+					//remove enemy after hit, and bring him back after 5 seconds, on other position
+		
+					context.fillRect( obj.x, obj.y, 32, 32 );
+					
+					obj.x = 1600;
+					obj.y = 40;
+					
+					
+					
+					
+
+				}
+			}, 10);
+		}
+	} 
+
 	/* variables to define position of pacman */
 
 	let PacmanBasics = {
@@ -74,90 +149,12 @@
 				let attackSpeed = 100;
 				weap.src = "ask-hand.png";
 				context.fillStyle = "blue";
-				
+				 
 				if ( event.keyCode === 32 ) {
-					if ( direction === "right") {
-						let attack = setInterval( function() {
-
-						context.fillRect(attackX+32, attackY, 32, 32);
-						attackX += 5;
-
-						context.drawImage(weap, 0, 0, 520, 520, attackX+32, attackY, 32, 32);
-						
-						//detect when weapon hit the target
-						if ( attackX <= (obj.x + 26) && obj.x <= ( attackX + 26 ) && attackY <= ( obj.y + 26 ) && obj.y <= ( attackY + 26 ) ) {
-							alert("Die motherfucker!");
-						}
-						
-						//clear weapon when it leave the board
-						if ( attackX >= 700 ) clearInterval( attack );
-						}, 10);
-
-
-					}
-					if ( direction === "left") {
-						let attack = setInterval( function() {
-						//attackX += 4;
-						context.fillRect(attackX-32, attackY, 32, 32);
-						attackX -= 5;
-						//createBeigns.Pacman();
-						context.drawImage(weap, 0, 0, 520, 520, attackX-32, attackY, 32, 32);
-
-						//detect when weapon hit the target
-						if ( attackX <= (obj.x + 26) && obj.x <= ( attackX + 26 ) && attackY <= ( obj.y + 26 ) && obj.y <= ( attackY + 26 ) ) {
-							alert("Die motherfucker!");
-						}
-
-						//clear weapon when it leave the board
-						if ( attackX <= 0 ) clearInterval( attack );
-						}, 10);
-					}
-					if ( direction === "up") {
-						let attack = setInterval( function() {
-						//attackX += 4;
-						context.fillRect(attackX, attackY-32, 32, 32);
-						attackY -= 5;
-						//createBeigns.Pacman();
-						context.drawImage(weap, 0, 0, 520, 520, attackX, attackY-32, 32, 32);
-						
-						//detect when weapon hit the target
-						if ( attackX <= (obj.x + 26) && obj.x <= ( attackX + 26 ) && attackY <= ( obj.y + 26 ) && obj.y <= ( attackY + 26 ) ) {
-							alert("Die motherfucker!");
-						}
-
-						//clear weapon when it leave the board
-						if ( attackY <= 60 ) {
-							clearInterval( attack );
-							context.fillRect(attackX, 30, 32, 32);
-						}
-							
-						}, 10);
-					}
-
-					if ( direction === "down") {
-						let attack = setInterval( function() {
-						//attackX += 4;
-						context.fillRect(attackX, attackY+32, 32, 32);
-						attackY += 5;
-						//createBeigns.Pacman();
-						context.drawImage(weap, 0, 0, 520, 520, attackX, attackY+32, 32, 32);
-						
-						//detect when weapon hit the target
-						if ( attackX <= (obj.x + 26) && obj.x <= ( attackX + 26 ) && attackY <= ( obj.y + 26 ) && obj.y <= ( attackY + 26 ) ) {
-							alert("Die motherfucker!");
-						}
-
-						//clear weapon when it leave the board
-						if ( attackY >= 512 ) {
-							clearInterval( attack );
-							//context.fillRect(attackX, 60, 32, 32);
-						}
-							
-						}, 10);
-					}
-					//detect when target is hit
-					
-									
+					detectHit( "right", attackX, attackY, weap, obj );
+					detectHit( "left", attackX, attackY, weap, obj );
+					detectHit( "up", attackX, attackY, weap, obj );
+					detectHit( "down", attackX, attackY, weap, obj );
 				};
 			}, false);
 
@@ -296,12 +293,8 @@
 			function iLikeToMoveIt() {
 				//start default movement
 
-					resultOfGame(that);
+				resultOfGame(that);
 					
-				
-
-
-
 
 				counter3++;
 				if ( counter3 == 30 ) {
