@@ -10,6 +10,7 @@
 
 	let context = pacmanWorld.getContext('2d');
 
+	/* Create board, game title and score */
 	var reCreateBoard = createBoard = function() {
 		context.fillStyle = "blue";
 		context.fillRect( 0, 0, pacmanWidth, pacmanHeight );
@@ -21,7 +22,7 @@
 
 	function resultOfGame(obj) {
 		var that = obj;
-			//touch of enemies...
+			//touch of the enemies...
 		if ( PacmanBasics.x <= (that.x + 26) && that.x <= ( PacmanBasics.x + 26 ) && PacmanBasics.y <= ( that.y + 26 ) && that.y <= ( PacmanBasics.y + 26) ) {
 			//... takes Pacman lives
 			pacmanLives--;
@@ -41,6 +42,7 @@
 		}
 	}
 
+	// detect when enemy kills poor Pacman
 	function detectCollison(pacman, enemy) {
 		if ( pacman.x <= (enemy.x + 26) && enemy.x <= ( pacman.x + 26 ) && pacman.y <= ( enemy.y + 26 ) && enemy.y <= ( pacman.y + 26 ) ) {
 			alert("Houston, we got a problem!");
@@ -127,21 +129,24 @@
 	let PacmanBasics = {
 		x: 0,
 		y: 40,
-		PacmanSpeed: 10,
+		PacmanSpeed: 1,
 		createPacman: function() {
 			let loadBeignsImages = new Image();
 			loadBeignsImages.src = "pac.png";
+
 			return loadBeignsImages.onload = function Pacman() {
 				//default
 				if ( PacmanBasics.x % 2 === 0 ) {
 					context.drawImage(loadBeignsImages, 320, 0, 32, 32, 0, 40, 32, 32);
 				} 
-				PacmanPowers.move();
+				
+				//PacmanPowers.moveTest();
+				//PacmanPowers.testGameLoop();
 			}
 		},
 		attack: function(obj) {
 			var that = this;
-			document.addEventListener('keydown', function(event) {
+			document.addEventListener('keypress', function(event) {
 				//let currentPosition = x;
 				let attackX = that.x;
 				let attackY = that.y;
@@ -159,17 +164,45 @@
 			}, false);
 
 		},
+		move: function(){
+
+		}
 	};
 	let direction = 0;
-
+	let startMoving = 0;
+	let x = 0;
+	let y = 0;
+	let moveTheBastard;
+	// create object for testing purpose
+	var keyState = {};
 	let PacmanPowers = {
-		testX: 0,
 		move: function() {
-			let x = 0;
-			let y = 0;
+			
 			document.addEventListener('keydown', function(event){
 				//console.log( event.keyCode );
 				/* increase values below so '%' operator could be used */
+				
+				startMoving = 1;
+				//PacmanPowers.movePacman(event);
+				moveTheBastard = setInterval( function(){
+					PacmanPowers.movePacman(event);
+				} , 100);
+				
+				 
+			}, false);
+			document.addEventListener('keyup', function(event){
+				//console.log( event.keyCode );
+				/* increase values below so '%' operator could be used */
+				startMoving = 0;
+				clearInterval( moveTheBastard);
+				moveTheBastard = 0;
+				//PacmanPowers.movePacman(event);
+				
+				 
+			}, false);
+		},
+		movePacman: function(event) {
+			if ( startMoving === 1) {
 				x++;
 				y++;
 				
@@ -230,8 +263,14 @@
 					} else if ( direction === "up" ) {
 						context.drawImage(loadBeignsImages, 352, 96, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
 					}
-				} 
-			});
+				}
+			} else {
+				//???
+				x = 0;
+				y = 0;
+			}
+			x = 0;
+			y = 0;
 		},
 		clearPacmanPreviousPosition: function() {
 			let currentpositionX = PacmanBasics.x;
@@ -253,7 +292,98 @@
 			}
 		}
 	}
+	
+	//PacmanPowers.move();
 
+/*  testing purposes new 'move Pacman' functionality */
+
+/* control variable that allows that iterval would be started only once when keydown is pressed */
+let controlInterval = 0; 
+function PacmanMoving(event) {
+	controlInterval++;
+	if ( startMoving === 1 && controlInterval <= 10 ) {
+		
+		
+		let loadBeignsImages = new Image();
+		loadBeignsImages.src = "pac.png";
+
+		//clear previous position of pacman head
+		//reCreateBoard();
+		PacmanPowers.clearPacmanPreviousPosition();
+		PacmanPowers.stayInside();
+		
+		if ( pacmanLives > 0) {
+			if ( event.keyCode === 39 ) {
+				PacmanBasics.x+=PacmanBasics.PacmanSpeed;
+				direction = "right";
+			}
+			if ( event.keyCode === 40 ) {				
+				PacmanBasics.y+=PacmanBasics.PacmanSpeed;
+				direction = "down";	
+			}
+			if ( event.keyCode === 37 ) {					
+				PacmanBasics.x-=PacmanBasics.PacmanSpeed;
+				direction = "left";
+			}
+			if ( event.keyCode === 38 ) {					
+				PacmanBasics.y-=PacmanBasics.PacmanSpeed;
+				direction = "up";
+			}
+		} else {
+			context.fillStyle = "blue";
+			context.fillRect( 0, 0, pacmanWidth, 40 );
+			context.fillStyle = "white";
+			context.font = "20px Verdana";
+			context.fillText("Pacman: " + pacmanLives + " Score: " + score + " THIS IS THE END OF YOU LOSER!!!!", 10, 30);
+			context.fillStyle = "blue";
+		}
+			
+
+		//draw Pacman one step ahead
+		if ( x % 2 ===  0 ) {
+			if ( direction === "right" ) {
+				context.drawImage(loadBeignsImages, 320, 0, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			} else if ( direction === "left" ) {
+				context.drawImage(loadBeignsImages, 352, 64, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			} else if ( direction === "down" ) {
+				context.drawImage(loadBeignsImages, 320, 32, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			} else if ( direction === "up" ) {
+				context.drawImage(loadBeignsImages, 320, 96, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			}
+			
+		} else if ( x % 2 ===  1 ) {
+			if ( direction === "right" ) {
+			context.drawImage(loadBeignsImages, 352, 0, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			} else if ( direction === "left" ) {
+				context.drawImage(loadBeignsImages, 320, 64, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			} else if ( direction === "down" ) {
+				context.drawImage(loadBeignsImages, 352, 32, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			} else if ( direction === "up" ) {
+				context.drawImage(loadBeignsImages, 352, 96, 32, 32, PacmanBasics.x, PacmanBasics.y, 32, 32);
+			}
+		}
+	}
+}
+
+			
+document.addEventListener('keydown', function(event){
+	startMoving = 1;
+	controlInterval = 0;	
+	x++;y++;
+	moveTheBastard = setInterval( function(){
+		PacmanMoving(event);
+	} , 0); 
+}, false);
+document.addEventListener('keyup', function(event){
+	//console.log( event.keyCode );
+	/* increase values below so '%' operator could be used */
+	startMoving = 0;
+	clearInterval( moveTheBastard);
+	moveTheBastard = 0;
+
+	//PacmanPowers.movePacman(event);
+}, false);
+		
 
 	/**
 	
@@ -463,10 +593,10 @@
 		PacmanBasics.attack(YellowEnemy);
 		PacmanBasics.attack(QQQEnemy);
 		
-		PinkEnemy.load();
-		RedEnemy.load();
-		YellowEnemy.load();
-		QQQEnemy.load();
+		//PinkEnemy.load();
+		//RedEnemy.load();
+		//YellowEnemy.load();
+		//QQQEnemy.load();
 	}
 
 	//start the game
