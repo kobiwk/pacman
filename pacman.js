@@ -129,7 +129,7 @@
 	let PacmanBasics = {
 		x: 0,
 		y: 40,
-		PacmanSpeed: 1,
+		PacmanSpeed: 10,
 		createPacman: function() {
 			let loadBeignsImages = new Image();
 			loadBeignsImages.src = "pac.png";
@@ -174,7 +174,8 @@
 	let y = 0;
 	let moveTheBastard;
 	// create object for testing purpose
-	var keyState = {};
+	//var keyState = {};
+
 	let PacmanPowers = {
 		move: function() {
 			
@@ -299,6 +300,7 @@
 
 /* control variable that allows that iterval would be started only once when keydown is pressed */
 let controlInterval = 0; 
+let keyState = {};
 function PacmanMoving(event) {
 	controlInterval++;
 	if ( startMoving === 1 && controlInterval <= 10 ) {
@@ -311,21 +313,18 @@ function PacmanMoving(event) {
 		//reCreateBoard();
 		PacmanPowers.clearPacmanPreviousPosition();
 		PacmanPowers.stayInside();
-		
 		if ( pacmanLives > 0) {
-			if ( event.keyCode === 39 ) {
+			if ( keyState[39] ) {
 				PacmanBasics.x+=PacmanBasics.PacmanSpeed;
 				direction = "right";
-			}
-			if ( event.keyCode === 40 ) {				
+
+			} else if ( keyState[40] ) {				
 				PacmanBasics.y+=PacmanBasics.PacmanSpeed;
 				direction = "down";	
-			}
-			if ( event.keyCode === 37 ) {					
+			} else if ( keyState[37] ) {					
 				PacmanBasics.x-=PacmanBasics.PacmanSpeed;
 				direction = "left";
-			}
-			if ( event.keyCode === 38 ) {					
+			} else if ( keyState[38] ) {					
 				PacmanBasics.y-=PacmanBasics.PacmanSpeed;
 				direction = "up";
 			}
@@ -363,27 +362,27 @@ function PacmanMoving(event) {
 			}
 		}
 	}
+	setTimeout(PacmanMoving,50);
 }
-
+PacmanMoving();
 			
 document.addEventListener('keydown', function(event){
 	startMoving = 1;
 	controlInterval = 0;	
 	x++;y++;
-	moveTheBastard = setInterval( function(){
-		PacmanMoving(event);
-	} , 0); 
-}, false);
+	keyState[event.keyCode || event.which] = true;
+}, true);
 document.addEventListener('keyup', function(event){
 	//console.log( event.keyCode );
 	/* increase values below so '%' operator could be used */
 	startMoving = 0;
-	clearInterval( moveTheBastard);
-	moveTheBastard = 0;
-
+	//clearInterval( moveTheBastard);
+	//moveTheBastard = 0;
+	keyState[event.keyCode || event.which] = false;
 	//PacmanPowers.movePacman(event);
 }, false);
-		
+
+		;
 
 	/**
 	
@@ -593,10 +592,10 @@ document.addEventListener('keyup', function(event){
 		PacmanBasics.attack(YellowEnemy);
 		PacmanBasics.attack(QQQEnemy);
 		
-		//PinkEnemy.load();
-		//RedEnemy.load();
-		//YellowEnemy.load();
-		//QQQEnemy.load();
+		PinkEnemy.load();
+		RedEnemy.load();
+		YellowEnemy.load();
+		QQQEnemy.load();
 	}
 
 	//start the game
